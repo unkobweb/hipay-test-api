@@ -9,11 +9,11 @@ export class PlantController {
 
   @Get("/")
   async getPlant(
-    @Query("search") search: string,
+    @Query("family_common_name") familyCommonName: string,
   ): Promise<PlantSummary> {
-    if (!search) {
-      throw new BadRequestException("Missing search parameter");
+    if (!familyCommonName) {
+      throw new BadRequestException("Missing family_common_name parameter");
     }
-    return this.plantService.getPlantByName(search);
+    return this.plantService.getPlantByName(familyCommonName);
   }
 }

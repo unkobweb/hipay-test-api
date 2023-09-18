@@ -3,11 +3,11 @@ import { PlantSummary } from "./types/plant-summary.type";
 
 @Injectable()
 export class PlantService {
-  async getPlantByName(name: string): Promise<PlantSummary> {
+  async getPlantByName(familyCommonName: string): Promise<PlantSummary> {
     const filter = encodeURIComponent(`filter[family_common_name]`) // need to correctly encode brackets
-    const plants = await fetch(`https://trefle.io/api/v1/plants?token=${process.env.TREFLE_API_KEY}&${filter}=${name}`).then(res => res.json())
+    const plants = await fetch(`https://trefle.io/api/v1/plants?token=${process.env.TREFLE_API_KEY}&${filter}=${familyCommonName}`).then(res => res.json())
     if (plants.data.length === 0) {
-      throw new NotFoundException(`No plant found with name ${name}`)
+      throw new NotFoundException(`No plant found with name ${familyCommonName}`)
     }
 
     const {scientific_name, year, links} = plants.data[0];
