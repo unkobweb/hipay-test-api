@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PlantController } from './plant.controller';
 import { PlantService } from './plant.service';
+import { NotFoundException } from '@nestjs/common';
 
 describe('PlantController', () => {
   let plantController: PlantController;
@@ -18,19 +19,28 @@ describe('PlantController', () => {
 
   describe('GET /', () => {
     it('Should return plant summary', async () => {
-      const result = { scientific_name: "Quercus rotundifolia", year: 1785, genus_family_common_name: null, species_observation: "W. Medit." }
+      const result = {scientific_name: "Crataegus monogyna", year: 1775, genus_family_common_name: "Rose family", species_observation: "Europe to Caucasus, N. Africa to Iraq"}
       jest.spyOn(plantService, 'getPlantByName').mockImplementation(async () => result);
 
-      expect(await plantController.getPlant('oak')).toMatchObject(result);
+      expect(await plantController.getPlant('Rose family')).toMatchObject(result);
     });
     it('Should throw BadRequestException', async () => {
-      const result = { scientific_name: "Quercus rotundifolia", year: 1785, genus_family_common_name: null, species_observation: "W. Medit." }
+      const result = {scientific_name: "Crataegus monogyna", year: 1775, genus_family_common_name: "Rose family", species_observation: "Europe to Caucasus, N. Africa to Iraq"}
       jest.spyOn(plantService, 'getPlantByName').mockImplementation(async () => result);
 
       try {
         await plantController.getPlant(undefined);
       } catch (error) {
-        expect(error.message).toBe('Missing search parameter');
+        expect(error.message).toBe('Missing family_common_name parameter');
+      }
+    });
+    it('Should throw NotFoundException', async () => {
+      jest.spyOn(plantService, 'getPlantByName').mockImplementation(async () => {throw new NotFoundException(`No plant found with name Rose`)});
+
+      try {
+        await plantController.getPlant('Not an existing flower family name');
+      } catch (error) {
+        expect(error.message).toBe('No plant found with name Rose');
       }
     });
   });
