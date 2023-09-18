@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PlantController } from './plant.controller';
 import { PlantService } from './plant.service';
-import { ConfigModule } from '@nestjs/config';
 
 describe('PlantController', () => {
   let plantController: PlantController;
   let plantService: PlantService;
 
   beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [PlantController],
       providers: [PlantService],
     }).compile();
@@ -23,6 +22,16 @@ describe('PlantController', () => {
       jest.spyOn(plantService, 'getPlantByName').mockImplementation(async () => result);
 
       expect(await plantController.getPlant('oak')).toMatchObject(result);
+    });
+    it('Should throw BadRequestException', async () => {
+      const result = { scientific_name: "Quercus rotundifolia", year: 1785, genus_family_common_name: null, species_observation: "W. Medit." }
+      jest.spyOn(plantService, 'getPlantByName').mockImplementation(async () => result);
+
+      try {
+        await plantController.getPlant(undefined);
+      } catch (error) {
+        expect(error.message).toBe('Missing search parameter');
+      }
     });
   });
 });
