@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { BadRequestException, Controller, Get, Query } from "@nestjs/common";
 import { PlantService } from "./plant.service";
 import { PlantSummary } from "./types/plant-summary.type";
 
@@ -11,6 +11,9 @@ export class PlantController {
   async getPlant(
     @Query("search") search: string,
   ): Promise<PlantSummary> {
+    if (!search) {
+      throw new BadRequestException("Missing search parameter");
+    }
     return this.plantService.getPlantByName(search);
   }
 }
