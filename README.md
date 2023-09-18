@@ -35,3 +35,11 @@ npm start:dev
 # Lancer le projet en mode production
 npm start
 ```
+
+## Tests
+
+Pour lancer les tests du projet, vous avez la commande suivante :
+
+```bash
+npm run test
+```
